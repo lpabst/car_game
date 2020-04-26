@@ -6,6 +6,7 @@ var entities = {
         this.h = h;
         this.speed = speed;
         this.color = color;
+        this.showPath = true;
 
         // Keep track of the car's drag path
         this.startingLocation = {

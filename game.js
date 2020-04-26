@@ -133,6 +133,12 @@ var Game = {
         Game.handleKeypress = function(e) {
             Game.keypressListener(e, data);
         }
+
+        // right click menu shouldn't open if the canvas is where the click happened
+        Game.handleCanvasRightClick = function(e) {
+            e.preventDefault();
+            return false;
+        }
     },
 
     addEventListeners: function(data) {
@@ -165,6 +171,9 @@ var Game = {
 
         // keypress listener
         createEventListner(window, 'keypress', Game.handleKeypress);
+
+        // right mouse click menu
+        createEventListner(data.canvas, 'contextmenu', Game.handleCanvasRightClick);
     }, 
 
     // unbinds all of the event listeners saved in the data.eventListeners list
@@ -248,6 +257,7 @@ var Game = {
         
         // draw all of the cars' paths first so they're in the 'background'
         cars.forEach(function(car){
+            if (!car.showPath) return;
             context.fillStyle = car.pathColor;
             car.path.forEach(function(location) {
                 context.fillRect(location.x, location.y, car.w, car.h);
@@ -301,14 +311,25 @@ var Game = {
         var mouseX = e.clientX - rect.left;
         var mouseY = e.clientY - rect.top;
 
-        // see if mouse is clicing on a car
+        // see if mouse is clicking on a car
         cars.forEach(function(car) {
             if (mouseX >= car.x && mouseX <= car.x + car.w && mouseY >= car.y && mouseY <= car.y + car.h) {
-                car.path = [ car.startingLocation ];
-                data.selectedCar = {
-                    car: car,
-                    offsetX: mouseX - car.x,
-                    offsetY: mouseY - car.y
+                // if it's a left click, clear any path the car may have had and start drawing a new one
+                if (e.which === 1) {
+                    car.showPath = true;
+                    car.path = [ car.startingLocation ];
+                    data.selectedCar = {
+                        car: car,
+                        offsetX: mouseX - car.x,
+                        offsetY: mouseY - car.y
+                    }
+                }
+
+                // if it's a right click, toggle showing the path (if there is one), but dont erase it
+                if (e.which === 3){
+                    if (car.path && car.path.length > 1) {
+                        car.showPath = !car.showPath
+                    }
                 }
             }            
         })
@@ -361,6 +382,10 @@ var Game = {
 
     keypressListener: function(e, data) {
         if (e.code === 'Space'){
+            // dont scroll down the page
+            e.preventDefault();
+
+            // either start moving the cars or reset the level
             if (!data.startedMovingCars) Game.handleMoveCars();
             else Game.handleResetLevel();
         }

@@ -5,7 +5,7 @@ html, body, div, p, button, img, h1, h2, h3, h4, h5, h6 {
 .main {
     box-sizing: border-box;
     margin: 0;
-    padding: 250px 60px;
+    padding: 0px 60px;
 }
 
 .message-div {
