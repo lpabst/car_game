@@ -17,43 +17,47 @@ var entities = {
 
         // figure out color for path based on color of car
         this.pathColorMap = {
-            red: '#f88',
-            blue: '#88f',
-            green: '#8f8',
+            red: 'rgba(250, 150, 150, 0.8)',
+            blue: 'rgba(150, 150, 250, 0.8)',
+            green: 'rgba(150, 250, 150, 0.8)',
         }
         this.pathColor = this.pathColorMap[this.color];
         
         // create destination for car
-        this.destination = new entities.Destination(destinationX, destinationY, this.w + 10, this.h + 10, this.color);
+        this.destination = new entities.Destination(destinationX, destinationY, this.color);
 
         // location update function moves car along its path
         this.finishedMovingAlongPath = false;
         this.reachedDestination = false;
         this.update = function() {
-            if (this.currentPathIndex < this.path.length - 1) {
-                this.currentPathIndex++;
-                var newLocation = this.path[this.currentPathIndex];
-                this.x = newLocation.x;
-                this.y = newLocation.y;
-            }else{
+            // if we already reached the destination or already reached the end of the path, don't move anymore
+            if (this.reachedDestination || this.finishedMovingAlongPath) return;
+
+            // update location
+            this.currentPathIndex++;
+            var newLocation = this.path[this.currentPathIndex];
+            this.x = newLocation.x;
+            this.y = newLocation.y;
+
+            // see if we've reached the end of the path
+            if (this.currentPathIndex >= this.path.length - 1){
                 this.finishedMovingAlongPath = true;
-                this.reachedDestination = objectsAreTouching(this, this.destination);
             }
+            
+            // see if we've reached the destination
+            this.reachedDestination = objectsAreTouching(this, this.destination);
         }
     },
 
-    Destination: function(x, y, w, h, carColor) {
+    Destination: function(x, y, carColor) {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
 
-        // figure out destination color based on car color
-        this.destinationColorForCarColor = {
-            red: '#f88',
-            blue: '#88f',
-            green: '#8f8',
-        }
-        this.color = this.destinationColorForCarColor[carColor];
+        // all destinations will be a small dot
+        this.w = 10;
+        this.h = 10;
+
+        // destinations should be the same color as their car
+        this.color = carColor;
     }
 }

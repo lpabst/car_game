@@ -1,8 +1,9 @@
 // checks if 2 objects are touching even slightly
 function objectsAreTouching(obj1, obj2) {
     // error check
-    if (!obj1.x || !obj1.y || !obj1.w || !obj1.h || !obj2.x || !obj2.y || !obj2.w || !obj2.h){
-        throw new Error('Must supply objects that have x,y,w,h properties. You supplied: ', obj1, obj2);
+    if (obj1.x === undefined || obj1.y === undefined || obj1.w === undefined || obj1.h === undefined || obj2.x === undefined || obj2.y === undefined || obj2.w === undefined || obj2.h === undefined){
+        console.log('Must supply objects that have x,y,w,h properties. You supplied: ', obj1, obj2)
+        throw new Error('Must supply objects that have x,y,w,h properties. See log above for the deets');
     }
 
     var obj1Left = obj1.x;

@@ -26,6 +26,10 @@ var Game = {
     },
 
     initLevel: function(data, level) {
+        // clear message box
+        Game.messageUser('')
+
+        // get data for the level
         data.mouseIsDown = false;
         data.selectedCar = null;
         data.moveCars = false;
@@ -40,7 +44,7 @@ var Game = {
                 new entities.Car(500, 100, 20, 20, 1, 'blue', 100, 500)
             ],
             3: [
-                new entities.Car(40, 300, 40, 40, 1, 'green', 450, 300),
+                new entities.Car(0, 300, 40, 40, 1, 'green', 560, 300),
                 new entities.Car(80, 40, 20, 20, 1, 'blue', 80, 450),
                 new entities.Car(400, 40, 20, 20, 1, 'red', 400, 450)
             ]
@@ -71,15 +75,17 @@ var Game = {
         
         // handlers to start moving cars and reset level
         Game.handleMoveCars = function() {
-            var carsHavePaths = false;
+            var allCarsHavePaths = true;
             data.cars.forEach(function(car){
-                if (car.path && car.path.length > 0) carsHavePaths = true;
+                if (!car.path || car.path.length <= 1) allCarsHavePaths = false;
             })
 
-            // if at least one car has a path to drive on, move the cars
-            if (carsHavePaths) {
+            // if all cars have a path to drive on, move the cars
+            if (allCarsHavePaths) {
                 data.moveCars = true;
                 data.startedMovingCars = true;
+            }else{
+                Game.messageUser('Not all cars have a path to move along. Give each car a path, then try to move them again!')
             }
         }
         Game.handleResetLevel = function() {
