@@ -35,6 +35,7 @@ var Game = {
         data.moveCars = false;
         data.startedMovingCars = false;
         
+        // get the cars for this level
         var carsForLevel = {
             1: [
                 new entities.Car(100, 100, 40, 40, 1, 'red', 500, 500)
@@ -53,9 +54,29 @@ var Game = {
                 new entities.Car(140, 140, 50, 50, 1, 'blue', 0, 550),
                 new entities.Car(500, 500, 50, 50, 1, 'red', 0, 0),
                 new entities.Car(100, 550, 50, 50, 1, 'aqua', 550, 0)
+            ],
+            5: [
+                new entities.Car(0, 0, 30, 80, 1, 'green', 295, 580),
+                new entities.Car(142, 0, 30, 80, 1, 'yellow', 580, 580),
+                new entities.Car(285, 0, 30, 80, 1, 'purple', 152, 580),
+                new entities.Car(427, 0, 30, 80, 1, 'red', 10, 580),
+                new entities.Car(570, 0, 30, 80, 1, 'blue', 437, 580)
+            ],
+            6: [
+                new entities.Car(0, 0, 150, 150, 1, 'blue', 525, 525),
+                new entities.Car(450, 0, 150, 150, 1, 'yellow', 75, 525),
+                new entities.Car(450, 450, 150, 150, 1, 'red', 75, 75),
+                new entities.Car(0, 450, 150, 150, 1, 'purple', 525, 75),
+                new entities.Car(20, 280, 40, 40, 2, 'aqua', 295, 20),
+                new entities.Car(540, 280, 40, 40, 2, 'green', 295, 580),
+            ],
+            7: [
+                new entities.Car(0, 0, 140, 40, 1, 'red', 200, 300),
+                new entities.Car(200, 420, 40, 180, 2, 'blue', 220, 320),
+                new entities.Car(0, 450, 150, 150, 1, 'yellow', 10, 10),
+                new entities.Car(450, 200, 150, 150, 1, 'green', 190, 320),
             ]
         }
-        
         data.cars = carsForLevel[level];
         data.level = level;
 
@@ -81,6 +102,8 @@ var Game = {
         
         // handlers to start moving cars and reset level
         Game.handleMoveCars = function() {
+            Game.messageUser('');
+
             var allCarsHavePaths = true;
             data.cars.forEach(function(car){
                 if (!car.path || car.path.length <= 1) allCarsHavePaths = false;
@@ -126,9 +149,9 @@ var Game = {
         data.eventListeners = [];
 
         // listeners to grab and move a car
-        createEventListner(data.canvas, 'mousedown', Game.handleMouseDownListener);
-        createEventListner(data.canvas, 'mousemove', Game.handleMouseMoveListener);
-        createEventListner(data.canvas, 'mouseup', Game.handleMouseUpListener);
+        createEventListner(window, 'mousedown', Game.handleMouseDownListener);
+        createEventListner(window, 'mousemove', Game.handleMouseMoveListener);
+        createEventListner(window, 'mouseup', Game.handleMouseUpListener);
 
         // listeners to start moving cars and reset level
         var moveCarsButton = document.getElementById('move-cars-button');
@@ -244,8 +267,11 @@ var Game = {
 
         // draw all of the destinations last so they don't get covered up by paths or cars since they're so small
         cars.forEach(function(car){
-            context.fillStyle = car.destination.color;
+            // do a 'border' again for the destination
+            context.fillStyle = 'black';
             context.fillRect(car.destination.x, car.destination.y, car.destination.w, car.destination.h);
+            context.fillStyle = car.destination.color;
+            context.fillRect(car.destination.x + 1, car.destination.y + 1, car.destination.w - 2, car.destination.h - 2);
         })
     },
     
@@ -304,6 +330,11 @@ var Game = {
         var newLocation = {
             x: mouseX - selectedCar.offsetX,
             y: mouseY - selectedCar.offsetY
+        }
+
+        // if mouse moves off the canvas, cancel all path creation to avoid weird buginess in the cars pathing
+        if (mouseX < 0 || mouseX > canvas.width || mouseY < 0 || mouseY > canvas.height) {
+            data.selectedCar = null;
         }
 
         // we don't want the car to return to the same place it has already been

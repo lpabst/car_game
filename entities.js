@@ -37,7 +37,7 @@ var entities = {
             if (this.reachedDestination || this.finishedMovingAlongPath) return;
 
             // update location
-            this.currentPathIndex++;
+            this.currentPathIndex += this.speed;
             var newLocation = this.path[this.currentPathIndex];
             this.x = newLocation.x;
             this.y = newLocation.y;
