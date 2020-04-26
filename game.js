@@ -15,7 +15,7 @@ var Game = {
         }
 
         // get data ready for the start of level 1
-        Game.initLevel(data, 2);
+        Game.initLevel(data, 1);
 
         // Add event listeners
         Game.nameEventHandlers(data);
@@ -29,6 +29,7 @@ var Game = {
         data.mouseIsDown = false;
         data.selectedCar = null;
         data.moveCars = false;
+        data.startedMovingCars = false;
         
         var carsForLevel = {
             1: [
@@ -78,6 +79,7 @@ var Game = {
             // if at least one car has a path to drive on, move the cars
             if (carsHavePaths) {
                 data.moveCars = true;
+                data.startedMovingCars = true;
             }
         }
         Game.handleResetLevel = function() {
@@ -166,7 +168,22 @@ var Game = {
             })
         }
 
-        // check if all cars have reached their target destination
+        // see if any cars collided!
+        var carsCollided = false;
+        if (cars.length >= 2) {
+            for (var i = 0; i < cars.length-1; i++){
+                for (var j = i+1; j < cars.length; j++){
+                    var carsAreTouching = objectsAreTouching(cars[i], cars[j]);
+                    if (carsAreTouching) carsCollided = true;
+                }
+            }
+        }
+        if (carsCollided) {
+            data.moveCars = false;
+            Game.messageUser('Some cars collided! Reset the board to try again!')
+        }
+
+        // check if all cars are done moving, and if they've all reached their target destination
         var allDoneMoving = true;
         var allOnTarget = true;
         cars.forEach(function(car) {
@@ -194,18 +211,22 @@ var Game = {
         context.fillStyle = '#000000';
         context.fillRect(0, 0, canvas.width, canvas.height);
 
+        // draw all of the destinations and paths first
         cars.forEach(function(car){
-            // draw car's destination
             context.fillStyle = car.destination.color;
             context.fillRect(car.destination.x, car.destination.y, car.destination.w, car.destination.h);
-    
-            // draw car's path
+        })
+        
+        // draw all of the cars' paths next
+        cars.forEach(function(car){
             context.fillStyle = car.pathColor;
             car.path.forEach(function(location) {
                 context.fillRect(location.x, location.y, car.w, car.h);
             })
-    
-            // draw car
+        })
+        
+        // draw all of the cars last
+        cars.forEach(function(car){
             context.fillStyle = car.color;
             context.fillRect(car.x, car.y, car.w, car.h);
         })
@@ -226,8 +247,8 @@ var Game = {
     },
 
     mouseDownListener: function(e, data) {
-        // if we are in the 'moveCars' phase, do nothing
-        if (data.moveCars) return;
+        // if we have started moving cars, do nothing (user must reset the board to drag cars again)
+        if (data.startedMovingCars) return;
 
         var canvas = data.canvas;
         var cars = data.cars;
@@ -251,8 +272,8 @@ var Game = {
     },
 
     mouseMoveListener: function(e, data) {
-        // if we are in the 'moveCars' phase, do nothing
-        if (data.moveCars) return;
+        // if we have started moving cars, do nothing (user must reset the board to drag cars again)
+        if (data.startedMovingCars) return;
 
         // if no car is being grabbed, do nothing
         if (!data.selectedCar) return;
@@ -284,15 +305,15 @@ var Game = {
     },
 
     mouseUpListener: function(e, data) {
-        // if we are in the 'moveCars' phase, do nothing
-        if (data.moveCars) return;
+        // if we have started moving cars, do nothing (user must reset the board to drag cars again)
+        if (data.startedMovingCars) return;
 
         data.selectedCar = null;
     },
 
     keypressListener: function(e, data) {
         if (e.code === 'Space'){
-            if (!data.moveCars) data.moveCars = true;
+            if (!data.startedMovingCars) Game.handleMoveCars();
             else Game.handleResetLevel();
         }
     },

@@ -37,42 +37,8 @@ var entities = {
                 this.y = newLocation.y;
             }else{
                 this.finishedMovingAlongPath = true;
-                this.reachedDestination = this.hasReachedDestination();
+                this.reachedDestination = objectsAreTouching(this, this.destination);
             }
-        }
-
-        // checks if the car is touching its destination pad even a little bit
-        this.hasReachedDestination = function() {
-            var carLeft = this.x;
-            var carRight = this.x + this.w;
-            var carTop = this.y;
-            var carBottom = this.y + this.h;
-            var destinationLeft = this.destination.x;
-            var destinationRight = this.destination.x + this.destination.w;
-            var destinationTop = this.destination.y;
-            var  destinationBottom = this.destination.y + this.destination.h;
-
-            // check if top left corner of car is touching destination
-            if (carLeft >= destinationLeft && carLeft <= destinationRight && carTop >= destinationTop && carTop <= destinationBottom){
-                return true;
-            }
-
-            // top right corner
-            if (carRight >= destinationLeft && carRight <= destinationRight && carTop >= destinationTop && carTop <= destinationBottom){
-                return true;
-            }
-
-            // bottom left corner
-            if (carLeft >= destinationLeft && carLeft <= destinationRight && carBottom >= destinationTop && carBottom <= destinationBottom){
-                return true;
-            }
-
-            // bottom right corner
-            if (carRight >= destinationLeft && carRight <= destinationRight && carBottom >= destinationTop && carBottom <= destinationBottom){
-                return true;
-            }
-
-            return false;
         }
     },
 
