@@ -47,6 +47,12 @@ var Game = {
                 new entities.Car(0, 300, 40, 40, 1, 'green', 560, 300),
                 new entities.Car(80, 40, 20, 20, 1, 'blue', 80, 450),
                 new entities.Car(400, 40, 20, 20, 1, 'red', 400, 450)
+            ],
+            4: [
+                new entities.Car(80, 0, 50, 50, 1, 'green', 550, 275),
+                new entities.Car(140, 140, 50, 50, 1, 'blue', 0, 550),
+                new entities.Car(500, 500, 50, 50, 1, 'red', 0, 0),
+                new entities.Car(100, 550, 50, 50, 1, 'aqua', 550, 0)
             ]
         }
         
@@ -216,14 +222,8 @@ var Game = {
         // black background for canvas
         context.fillStyle = '#000000';
         context.fillRect(0, 0, canvas.width, canvas.height);
-
-        // draw all of the destinations and paths first
-        cars.forEach(function(car){
-            context.fillStyle = car.destination.color;
-            context.fillRect(car.destination.x, car.destination.y, car.destination.w, car.destination.h);
-        })
         
-        // draw all of the cars' paths next
+        // draw all of the cars' paths first so they're in the 'background'
         cars.forEach(function(car){
             context.fillStyle = car.pathColor;
             car.path.forEach(function(location) {
@@ -231,10 +231,21 @@ var Game = {
             })
         })
         
-        // draw all of the cars last
+        // draw all of the cars next so they show up on top of all paths
         cars.forEach(function(car){
-            context.fillStyle = car.color;
+            // fill with black first
+            context.fillStyle = 'black';
             context.fillRect(car.x, car.y, car.w, car.h);
+            // then fill a slightly smaller box with the car's color so we get a black 'border'
+            // this makes them easier to see on top of their paths, especially in case of a collision
+            context.fillStyle = car.color;
+            context.fillRect(car.x + 1, car.y + 1, car.w - 2, car.h - 2);
+        })
+
+        // draw all of the destinations last so they don't get covered up by paths or cars since they're so small
+        cars.forEach(function(car){
+            context.fillStyle = car.destination.color;
+            context.fillRect(car.destination.x, car.destination.y, car.destination.w, car.destination.h);
         })
     },
     

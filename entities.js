@@ -20,6 +20,9 @@ var entities = {
             red: 'rgba(250, 150, 150, 0.8)',
             blue: 'rgba(150, 150, 250, 0.8)',
             green: 'rgba(150, 250, 150, 0.8)',
+            yellow: 'rgba(250, 250, 150, 0.8)',
+            purple: 'rgba(250, 150, 250, 0.8)',
+            aqua: 'rgba(150, 250, 250, 0.8)'
         }
         this.pathColor = this.pathColorMap[this.color];
         
