@@ -37,7 +37,7 @@ var Game = {
         
         var carsForLevel = {
             1: [
-                new entities.Car(100, 100, 20, 20, 1, 'red', 500, 500)
+                new entities.Car(100, 100, 40, 40, 1, 'red', 500, 500)
             ],
             2: [
                 new entities.Car(100, 100, 20, 20, 1, 'red', 500, 500),

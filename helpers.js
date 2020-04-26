@@ -35,5 +35,25 @@ function objectsAreTouching(obj1, obj2) {
         return true;
     }
 
+    // now we need to check if the top left corner of obj2 is within the space occupied by obj1, etc
+    if (obj2Left >= obj1Left && obj2Left <= obj1Right && obj2Top >= obj1Top && obj2Top <= obj1Bottom){
+        return true;
+    }
+
+    // top right corner
+    if (obj2Right >= obj1Left && obj2Right <= obj1Right && obj2Top >= obj1Top && obj2Top <= obj1Bottom){
+        return true;
+    }
+
+    // bottom left corner
+    if (obj2Left >= obj1Left && obj2Left <= obj1Right && obj2Bottom >= obj1Top && obj2Bottom <= obj1Bottom){
+        return true;
+    }
+
+    // bottom right corner
+    if (obj2Right >= obj1Left && obj2Right <= obj1Right && obj2Bottom >= obj1Top && obj2Bottom <= obj1Bottom){
+        return true;
+    }
+
     return false;
 }
