@@ -204,13 +204,6 @@ var Game = {
 
     update: function(data) {
         var cars = data.cars;    
-        
-        // if cars should be moving, move them
-        if (data.moveCars) {
-            cars.forEach(function(car){
-                car.update()
-            })
-        }
 
         // see if any cars collided!
         var carsCollided = false;
@@ -224,7 +217,14 @@ var Game = {
         }
         if (carsCollided) {
             data.moveCars = false;
-            Game.messageUser('Some cars collided! Reset the board to try again!')
+            return Game.messageUser('Some cars collided! Reset the board to try again!')
+        }
+        
+        // if cars should be moving, move them
+        if (data.moveCars) {
+            cars.forEach(function(car){
+                car.update()
+            })
         }
 
         // check if all cars are done moving, and if they've all reached their target destination
